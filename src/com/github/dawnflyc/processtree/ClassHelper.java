@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 根据包获取类
+ * 一系列反射方法
  */
 public class ClassHelper {
     /**

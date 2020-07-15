@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * 树流程主类
+ */
 public class Tree {
     /**
      * 扫描包名
@@ -18,6 +21,9 @@ public class Tree {
         return packageName;
     }
 
+    /**
+     * 开始扫描运行
+     */
     public void run() {
         Set<Class<?>> set=scan(packageName,true,null);
         set.forEach(aClass -> {
@@ -26,7 +32,11 @@ public class Tree {
         });
     }
 
-
+    /**
+     * 递归处理
+     * @param treeScan
+     * @param clazz
+     */
     protected void handle(TreeScan treeScan,Class<?> clazz) {
         String packageName=treeScan.packageName();
         boolean recursive=treeScan.recursive();
