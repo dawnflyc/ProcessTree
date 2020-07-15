@@ -110,10 +110,8 @@ public class ClassHelper {
                             CACHE.put(p, set1);
                         }
                         set1.add(clazz);
-
                     }
                 }
-
             }
         }
     }
