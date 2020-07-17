@@ -1,13 +1,13 @@
 package com.github.dawnflyc.processtree;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 树流程主类
  */
 public class Tree {
+
     /**
      * 扫描包名
      */
@@ -21,36 +21,31 @@ public class Tree {
         return packageName;
     }
 
+    protected final Map<String,Object> instances=new HashMap<>();
+
     /**
      * 开始扫描运行
      */
     public void run() {
         Set<Class<?>> set=scan(packageName,true,null);
-        set.forEach(aClass -> {
-            TreeScan scan=readTreeScan(aClass);
-            if (scan!=null){handle(scan,aClass);}
-        });
+        List<TreeScanClass> treeScanClasses=sort(set);
+        treeScanClasses.forEach(treeScanClass -> handle(treeScanClass.aClass,treeScanClass.treeScan));
     }
 
     /**
-     * 递归处理
-     * @param treeScan
+     * 处理
      * @param clazz
      */
-    protected void handle(TreeScan treeScan,Class<?> clazz) {
-        String packageName=treeScan.packageName();
-        boolean recursive=treeScan.recursive();
-        Class<?> method=treeScan.method();
-        if (packageName!=null && method!=null){
-            Set<Class<?>> set=scan(packageName,recursive,method);
-            if (!resultHandle(clazz,set)){
-                set.forEach(aClass -> {
-                    TreeScan scan=readTreeScan(aClass);
-                    if (scan!=null){handle(scan,aClass);}
-                });
+    protected void handle(Class<?> clazz,TreeScan treeScan) {
+        if (treeScan!=null) {
+            String packageName = treeScan.packageName();
+            boolean recursive = treeScan.recursive();
+            Class<?> method = treeScan.method();
+            if (packageName != null && method != null) {
+                Set<Class<?>> set = scan(packageName, recursive, method);
+                this.instances.putAll(resultHandle(clazz, treeScan, set, this.instances));
             }
         }
-
     }
 
     /**
@@ -66,7 +61,7 @@ public class Tree {
     }
 
     /**
-     * 批量读取注解
+     * 批量读取注解并排序
      * @param scans set
      * @return
      */
@@ -78,7 +73,21 @@ public class Tree {
                 treeScans.add(treeScan);
             }
         });
+        System.out.println();
         return treeScans;
+    }
+
+    protected List<TreeScanClass> sort(Set<Class<?>> set){
+        List<TreeScanClass> list=new ArrayList<>();
+        set.forEach(aClass -> {
+            TreeScan treeScan=readTreeScan(aClass);
+            if (treeScan!=null){
+                TreeScanClass treeScanClass=new TreeScanClass(aClass,treeScan);
+                list.add(treeScanClass);
+            }
+        });
+        Collections.sort(list,(o1, o2) -> o2.getPriority()-o1.getPriority());
+        return list;
     }
 
     /**
@@ -125,21 +134,54 @@ public class Tree {
      * @param set 处理set
      * @return
      */
-    protected boolean resultHandle(Class<?> clazz, Set<Class<?>> set) {
+    protected Map<String,Object> resultHandle(Class<?> clazz, TreeScan treeScan, Set<Class<?>> set,Map<String,Object> map) {
         if (clazz != null) {
             if (ITreeHandler.class.isAssignableFrom(clazz)) {
+                Result result=new Result(clazz,treeScan.method(),set,map);
                 try {
-                    ((ITreeHandler)(clazz.newInstance())).handle(new Result(set));
+                    ((ITreeHandler)(clazz.newInstance())).handle(result);
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
-                return true;
+                return result.getInstance();
                 }
-                return false;
             }
         throw new NullPointerException("要处理的类为空！");
+        }
+
+        public class TreeScanClass{
+            private int priority;
+            private Class<?> aClass;
+            private TreeScan treeScan;
+
+            public TreeScanClass(Class<?> aClass, TreeScan treeScan) {
+                this.aClass = aClass;
+                this.treeScan = treeScan;
+                this.priority=treeScan.priority();
+            }
+
+            public void setaClass(Class<?> aClass) {
+                this.aClass = aClass;
+            }
+
+            public void setTreeScan(TreeScan treeScan) {
+                this.treeScan = treeScan;
+                this.priority=treeScan.priority();
+            }
+
+            public int getPriority() {
+                return priority;
+            }
+
+            public Class<?> getaClass() {
+                return aClass;
+            }
+
+            public TreeScan getTreeScan() {
+                return treeScan;
+            }
         }
 
     }

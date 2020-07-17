@@ -26,6 +26,12 @@ public @interface TreeScan {
     boolean recursive() default true;
 
     /**
+     * 优先级
+     * @return
+     */
+    int priority() default 0;
+
+    /**
      * 扫描方法,接口或类
      * 如何识别你要的结果就需要此字段了
      * 比如你需要扫描所有物品
