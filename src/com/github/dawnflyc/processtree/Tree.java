@@ -48,6 +48,18 @@ public class Tree {
         }
     }
 
+    protected String escape(Class<?> clazz,String str){
+        switch (str){
+            case "auto":
+                str= clazz.getPackage().getName();
+                break;
+            case "all":
+                str= "";
+                break;
+        }
+        return str;
+    }
+
     /**
      * 读取注解
      * @param scan
@@ -73,7 +85,6 @@ public class Tree {
                 treeScans.add(treeScan);
             }
         });
-        System.out.println();
         return treeScans;
     }
 

@@ -15,9 +15,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface TreeScan {
     /**
      * 扫描包
+     * auto : 标注类的包名
+     * all : 全部
      * @return
      */
-    String packageName() default "";
+    String packageName() default "auto";
 
     /**
      * 是否迭代循环，是否扫描包内包
