@@ -17,18 +17,21 @@ public @interface TreeScan {
      * 扫描包
      * auto : 标注类的包名
      * all : 全部
+     *
      * @return
      */
     String packageName() default "auto";
 
     /**
      * 是否迭代循环，是否扫描包内包
+     *
      * @return
      */
     boolean recursive() default true;
 
     /**
      * 优先级
+     *
      * @return
      */
     int priority() default 0;
@@ -38,6 +41,7 @@ public @interface TreeScan {
      * 如何识别你要的结果就需要此字段了
      * 比如你需要扫描所有物品
      * 那么你的method=Item.class();
+     *
      * @return
      */
     Class method();

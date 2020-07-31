@@ -36,7 +36,7 @@ public class ClassHelper {
      * 清理缓存
      */
     public void clearCache() {
-        this.CACHE = new HashMap<>();
+        CACHE = new HashMap<>();
     }
 
     /**
@@ -90,7 +90,7 @@ public class ClassHelper {
             File[] ClassFiles = PackageFile.listFiles(pathname -> (recursive && pathname.isDirectory()) || (pathname.getName().endsWith(".class")));
             for (File classFile : ClassFiles) {
                 if (classFile.isDirectory()) {
-                    findClassByFile(packageName + (packageName.trim().length()>0 ? "." : "") + classFile.getName(), classFile.getAbsolutePath(), recursive, set);
+                    findClassByFile(packageName + (packageName.trim().length() > 0 ? "." : "") + classFile.getName(), classFile.getAbsolutePath(), recursive, set);
                 } else {
                     String className = classFile.getName().substring(0, classFile.getName().length() - 6);
                     Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className);
