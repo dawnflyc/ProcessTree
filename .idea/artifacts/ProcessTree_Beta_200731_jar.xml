@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="ProcessTree_Beta.200715:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/ProcessTree_Beta_200715_jar</output-path>
+  <artifact type="jar" name="ProcessTree_Beta.200731:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ProcessTree_Beta_200731_jar</output-path>
     <root id="archive" name="ProcessTree.jar">
       <element id="module-output" name="ProcessTree" />
     </root>

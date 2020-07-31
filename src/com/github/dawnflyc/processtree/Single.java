@@ -14,12 +14,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface Single {
     /**
      * 名单
+     *
      * @return
      */
-    Class<?> [] list() default {};
+    Class<?>[] list() default {};
 
     /**
      * 白名单或者黑名单
+     *
      * @return
      */
     boolean white() default false;
