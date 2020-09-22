@@ -1,7 +1,10 @@
 package com.github.dawnflyc.processtree;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 树流程主类
@@ -12,22 +15,35 @@ public class Tree {
      * 扫描包名
      */
     protected final String packageName;
-    protected final Map<String, Object> instances = new HashMap<>();
+    /**
+     * 是否迭代扫描
+     */
+    protected final boolean recursive;
 
     public Tree(String packageName) {
         this.packageName = packageName;
+        this.recursive = true;
+    }
+
+    public Tree(String packageName, boolean recursive) {
+        this.packageName = packageName;
+        this.recursive = recursive;
     }
 
     public String getPackageName() {
         return packageName;
     }
 
+    public boolean isRecursive() {
+        return recursive;
+    }
+
     /**
      * 开始扫描运行
      */
     public void run() {
-        Set<Class<?>> set = scan(packageName, true, null);
-        List<TreeScanClass> treeScanClasses = sort(set);
+        Set<Class<?>> set = scanPackage(packageName, recursive);
+        List<TreeScanClass> treeScanClasses = findAndSort(set);
         treeScanClasses.forEach(this::handle);
     }
 
@@ -38,8 +54,8 @@ public class Tree {
      */
     protected void handle(TreeScanClass treeScan) {
         if (treeScan != null && treeScan.getPackageName() != null && treeScan.getMethon() != null) {
-            Set<Class<?>> set = scan(treeScan.getPackageName(), treeScan.isRecursive(), treeScan.getMethon());
-            this.instances.putAll(resultHandle(treeScan.getAnnotation(), treeScan, set, this.instances));
+            Set<Class<?>> set = filterMetod(scanPackage(treeScan.getPackageName(), treeScan.isRecursive()), treeScan.getMethon());
+            resultHandle(treeScan.getAnnotation(), treeScan, set);
         }
     }
 
@@ -81,7 +97,7 @@ public class Tree {
      * @param set 排序集合
      * @return 排序返回
      */
-    protected List<TreeScanClass> sort(Set<Class<?>> set) {
+    protected List<TreeScanClass> findAndSort(Set<Class<?>> set) {
         List<TreeScanClass> list = new ArrayList<>();
         set.forEach(aClass -> {
             TreeScan treeScan = readTreeScan(aClass);
@@ -95,21 +111,20 @@ public class Tree {
     }
 
     /**
-     * 扫描
+     * 扫描包
      *
      * @param packageName 包名
      * @param recursive   是否扫描包内包
-     * @param method      继承此类的被扫描
      * @return 扫描结果
      */
-    protected Set<Class<?>> scan(String packageName, boolean recursive, Class<?> method) {
+    protected Set<Class<?>> scanPackage(String packageName, boolean recursive) {
         Set<Class<?>> set = null;
         try {
             set = ClassHelper.getInstance().FindClass(packageName, recursive);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return filter(set, method);
+        return set;
     }
 
 
@@ -117,10 +132,10 @@ public class Tree {
      * set根据method过滤
      *
      * @param set    扫描结果
-     * @param method 扫描方法
+     * @param method 方法
      * @return 过滤后的set
      */
-    protected Set<Class<?>> filter(Set<Class<?>> set, Class<?> method) {
+    protected Set<Class<?>> filterMetod(Set<Class<?>> set, Class<?> method) {
         Set<Class<?>> set1 = new HashSet<>();
         if (set != null && method != null) {
             set.forEach(aClass -> {
@@ -140,21 +155,16 @@ public class Tree {
      * @param clazz    注解类
      * @param treeScan 扫描实体
      * @param set      扫描结果
-     * @param map      实例map
-     * @return 实例map
      */
-    protected Map<String, Object> resultHandle(Class<?> clazz, TreeScanClass treeScan, Set<Class<?>> set, Map<String, Object> map) {
+    protected void resultHandle(Class<?> clazz, TreeScanClass treeScan, Set<Class<?>> set) {
         if (clazz != null) {
             if (ITreeHandler.class.isAssignableFrom(clazz)) {
-                Result result = new Result(clazz, treeScan.getMethon(), set, map);
+                Result result = new Result(clazz, set);
                 try {
                     ((ITreeHandler) (clazz.newInstance())).handle(result);
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
+                } catch (InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
-                return result.getInstance();
             }
         }
         throw new NullPointerException("要处理的类为空！");

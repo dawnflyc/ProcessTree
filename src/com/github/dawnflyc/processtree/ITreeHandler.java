@@ -8,5 +8,10 @@ package com.github.dawnflyc.processtree;
  */
 public interface ITreeHandler<T> {
 
+    /**
+     * 处理方法
+     *
+     * @param result 扫描返回的接口
+     */
     void handle(Result<T> result);
 }

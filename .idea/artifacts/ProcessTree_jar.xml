@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact name="ProcessTree:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ProcessTree_jar</output-path>
+    <root id="root">
+      <element id="archive" name="ProcessTree.jar">
+        <element id="module-output" name="ProcessTree" />
+      </element>
+    </root>
+  </artifact>
+</component>
