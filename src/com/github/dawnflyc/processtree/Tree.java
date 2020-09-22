@@ -167,7 +167,6 @@ public class Tree {
                 }
             }
         }
-        throw new NullPointerException("要处理的类为空！");
     }
 
     /**
