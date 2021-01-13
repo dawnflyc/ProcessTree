@@ -3,10 +3,9 @@ package com.github.dawnflyc.processtree;
 
 /**
  * 处理扫描数据
- * 扫描类如果继承此接口便可获取扫描数据
- * 如果不实现，那么扫描结果中有类注解扫描将会继续扫描
+ * 扫描类如果实现此接口便可获取扫描数据，从而处理扫描数据
  */
-public interface ITreeHandler<T> {
+public interface IScanResultHandler<T> {
 
     /**
      * 处理方法

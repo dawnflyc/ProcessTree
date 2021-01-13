@@ -1,4 +1,4 @@
-package com.github.dawnflyc.processtree;
+package com.github.dawnflyc.processtree.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 一系列反射方法
+ * 一系列类反射方法
  */
 public class ClassHelper {
     /**
@@ -23,6 +23,7 @@ public class ClassHelper {
     private static ClassHelper INSTANCE;
 
     private ClassHelper() {
+
     }
 
     public static ClassHelper getInstance() {
@@ -49,7 +50,7 @@ public class ClassHelper {
     }
 
     /**
-     * 查找类,如果包名是“”那么查找范围为jar包
+     * 查找类,如果包名是“”那么查找范围为jar包里全部
      *
      * @param packageName 包名
      * @param recursive   是否迭代循环

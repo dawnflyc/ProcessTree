@@ -1,4 +1,7 @@
+/*
 package com.github.dawnflyc.processtree;
+
+import com.github.dawnflyc.processtree.util.ClassHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,18 +9,122 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+*/
 /**
  * 树流程主类
- */
+ * <p>
+ * 扫描包名
+ * <p>
+ * 是否迭代包扫描
+ * <p>
+ * 开始扫描运行
+ * <p>
+ * 处理
+ *
+ * @param treeScan 扫描实体
+ * <p>
+ * 包名转义
+ * @param clazz 注解类
+ * @param str   包名
+ * @return 转义后的包
+ * <p>
+ * 读取注解
+ * @param scan 读取的类
+ * @return 扫描注解
+ * <p>
+ * 注解转为TreeScanClass并根据优先级排序
+ * @param set 排序集合
+ * @return 排序返回
+ * <p>
+ * 扫描包
+ * @param packageName 包名
+ * @param recursive   是否扫描包内包
+ * @return 扫描结果
+ * <p>
+ * set根据目标过滤
+ * @param set    扫描结果
+ * @param method 方法
+ * @return 过滤后的set
+ * <p>
+ * 扫描结果处理
+ * @param clazz    注解类
+ * @param treeScan 扫描实体
+ * @param set      扫描结果
+ * <p>
+ * 扫描实体类
+ * <p>
+ * 包名
+ * <p>
+ * 迭代循环
+ * <p>
+ * 优先级
+ * <p>
+ * 扫描目标
+ * <p>
+ * 注解类
+ *//*
+
 public class Tree {
 
-    /**
-     * 扫描包名
-     */
+    */
+/**
+ * 扫描包名
+ * <p>
+ * 是否迭代包扫描
+ * <p>
+ * 开始扫描运行
+ * <p>
+ * 处理
+ *
+ * @param treeScan 扫描实体
+ * <p>
+ * 包名转义
+ * @param clazz 注解类
+ * @param str   包名
+ * @return 转义后的包
+ * <p>
+ * 读取注解
+ * @param scan 读取的类
+ * @return 扫描注解
+ * <p>
+ * 注解转为TreeScanClass并根据优先级排序
+ * @param set 排序集合
+ * @return 排序返回
+ * <p>
+ * 扫描包
+ * @param packageName 包名
+ * @param recursive   是否扫描包内包
+ * @return 扫描结果
+ * <p>
+ * set根据目标过滤
+ * @param set    扫描结果
+ * @param method 方法
+ * @return 过滤后的set
+ * <p>
+ * 扫描结果处理
+ * @param clazz    注解类
+ * @param treeScan 扫描实体
+ * @param set      扫描结果
+ * <p>
+ * 扫描实体类
+ * <p>
+ * 包名
+ * <p>
+ * 迭代循环
+ * <p>
+ * 优先级
+ * <p>
+ * 扫描目标
+ * <p>
+ * 注解类
+ *//*
+
     protected final String packageName;
-    /**
-     * 是否迭代扫描
-     */
+    */
+/**
+ * 是否迭代包扫描
+ *//*
+
     protected final boolean recursive;
 
     public Tree(String packageName) {
@@ -38,20 +145,24 @@ public class Tree {
         return recursive;
     }
 
-    /**
-     * 开始扫描运行
-     */
+    */
+/**
+ * 开始扫描运行
+ *//*
+
     public void run() {
         Set<Class<?>> set = scanPackage(packageName, recursive);
         List<TreeScanClass> treeScanClasses = findAndSort(set);
         treeScanClasses.forEach(this::handle);
     }
 
-    /**
-     * 处理
-     *
-     * @param treeScan 扫描实体
-     */
+    */
+/**
+ * 处理
+ *
+ * @param treeScan 扫描实体
+ *//*
+
     protected void handle(TreeScanClass treeScan) {
         if (treeScan != null && treeScan.getPackageName() != null && treeScan.getMethon() != null) {
             Set<Class<?>> set = filterMetod(scanPackage(treeScan.getPackageName(), treeScan.isRecursive()), treeScan.getMethon());
@@ -59,13 +170,15 @@ public class Tree {
         }
     }
 
-    /**
-     * 包名转义
-     *
-     * @param clazz 注解类
-     * @param str   包名
-     * @return 转义后的包
-     */
+    */
+/**
+ * 包名转义
+ *
+ * @param clazz 注解类
+ * @param str   包名
+ * @return 转义后的包
+ *//*
+
     protected String escape(Class<?> clazz, String str) {
         switch (str) {
             case "auto":
@@ -78,29 +191,33 @@ public class Tree {
         return str;
     }
 
-    /**
-     * 读取注解
-     *
-     * @param scan 读取的类
-     * @return 扫描注解
-     */
-    protected TreeScan readTreeScan(Class<?> scan) {
-        if (scan.isAnnotationPresent(TreeScan.class)) {
-            return scan.getAnnotation(TreeScan.class);
+    */
+/**
+ * 读取注解
+ *
+ * @param scan 读取的类
+ * @return 扫描注解
+ *//*
+
+    protected ScanNode readTreeScan(Class<?> scan) {
+        if (scan.isAnnotationPresent(ScanNode.class)) {
+            return scan.getAnnotation(ScanNode.class);
         }
         return null;
     }
 
-    /**
-     * 注解转为TreeScanClass并根据优先级排序
-     *
-     * @param set 排序集合
-     * @return 排序返回
-     */
+    */
+/**
+ * 注解转为TreeScanClass并根据优先级排序
+ *
+ * @param set 排序集合
+ * @return 排序返回
+ *//*
+
     protected List<TreeScanClass> findAndSort(Set<Class<?>> set) {
         List<TreeScanClass> list = new ArrayList<>();
         set.forEach(aClass -> {
-            TreeScan treeScan = readTreeScan(aClass);
+            ScanNode treeScan = readTreeScan(aClass);
             if (treeScan != null) {
                 TreeScanClass treeScanClass = new TreeScanClass(aClass, treeScan);
                 list.add(treeScanClass);
@@ -110,13 +227,15 @@ public class Tree {
         return list;
     }
 
-    /**
-     * 扫描包
-     *
-     * @param packageName 包名
-     * @param recursive   是否扫描包内包
-     * @return 扫描结果
-     */
+    */
+/**
+ * 扫描包
+ *
+ * @param packageName 包名
+ * @param recursive   是否扫描包内包
+ * @return 扫描结果
+ *//*
+
     protected Set<Class<?>> scanPackage(String packageName, boolean recursive) {
         Set<Class<?>> set = null;
         try {
@@ -128,13 +247,15 @@ public class Tree {
     }
 
 
-    /**
-     * set根据method过滤
-     *
-     * @param set    扫描结果
-     * @param method 方法
-     * @return 过滤后的set
-     */
+    */
+/**
+ * set根据目标过滤
+ *
+ * @param set    扫描结果
+ * @param method 方法
+ * @return 过滤后的set
+ *//*
+
     protected Set<Class<?>> filterMetod(Set<Class<?>> set, Class<?> method) {
         Set<Class<?>> set1 = new HashSet<>();
         if (set != null && method != null) {
@@ -149,19 +270,21 @@ public class Tree {
     }
 
 
-    /**
-     * 扫描结果处理
-     *
-     * @param clazz    注解类
-     * @param treeScan 扫描实体
-     * @param set      扫描结果
-     */
+    */
+/**
+ * 扫描结果处理
+ *
+ * @param clazz    注解类
+ * @param treeScan 扫描实体
+ * @param set      扫描结果
+ *//*
+
     protected void resultHandle(Class<?> clazz, TreeScanClass treeScan, Set<Class<?>> set) {
         if (clazz != null) {
-            if (ITreeHandler.class.isAssignableFrom(clazz)) {
+            if (IScanResultHandler.class.isAssignableFrom(clazz)) {
                 Result result = new Result(clazz, set);
                 try {
-                    ((ITreeHandler) (clazz.newInstance())).handle(result);
+                    ((IScanResultHandler) (clazz.newInstance())).handle(result);
                 } catch (InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -169,36 +292,48 @@ public class Tree {
         }
     }
 
-    /**
-     * 扫描实体类
-     */
+    */
+/**
+ * 扫描实体类
+ *//*
+
     public class TreeScanClass {
-        /**
-         * 包名
-         */
+        */
+/**
+ * 包名
+ *//*
+
         private final String packageName;
-        /**
-         * 迭代循环
-         */
+        */
+/**
+ * 迭代循环
+ *//*
+
         private final boolean recursive;
-        /**
-         * 优先级
-         */
+        */
+/**
+ * 优先级
+ *//*
+
         private final int priority;
-        /**
-         * 扫描方法
-         */
-        private final Class<?> methon;
-        /**
-         * 注解类
-         */
+        */
+/**
+ * 扫描目标
+ *//*
+
+        private final Class<?> target;
+        */
+/**
+ * 注解类
+ *//*
+
         private final Class<?> annotation;
 
-        public TreeScanClass(Class<?> aClass, TreeScan treeScan) {
+        public TreeScanClass(Class<?> aClass, ScanNode treeScan) {
             this.packageName = escape(aClass, treeScan.packageName());
             this.recursive = treeScan.recursive();
             this.priority = treeScan.priority();
-            this.methon = treeScan.method();
+            this.target = treeScan.target();
             this.annotation = aClass;
         }
 
@@ -215,7 +350,7 @@ public class Tree {
         }
 
         public Class<?> getMethon() {
-            return methon;
+            return target;
         }
 
         public Class<?> getAnnotation() {
@@ -224,3 +359,4 @@ public class Tree {
     }
 
 }
+*/
