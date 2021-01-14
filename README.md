@@ -69,6 +69,22 @@ tree.start();
 
 接口里面可以写上方法，比如获取要注册的方块，可以写一个getBlock()，因为注册方块需要方块对象，这时就可直接调用getBlock()。
 
+### 五、如何在Gradle中导入
+
+```
+compile fileTree(dir:'libs',includes:['*jar'])
+```
+
+这段代码放入dependencies里，导入libs中所有库。
+
+```
+from {
+    files("libs/ProcessTree.jar").collect{ it.isDirectory() ? it : zipTree(it) }
+}
+```
+
+这段放入jar里，打包时会将框架打入包内。
+
 ### 四、所有用到的类
 
 **1、**    **ScanNode**：扫描节点类，注解，有四个参数：

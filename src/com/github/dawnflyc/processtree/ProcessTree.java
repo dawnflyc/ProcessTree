@@ -2,7 +2,8 @@ package com.github.dawnflyc.processtree;
 
 import com.github.dawnflyc.processtree.data.ScanNodeData;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static com.github.dawnflyc.processtree.util.ScanHelper.*;
@@ -23,7 +24,7 @@ public class ProcessTree {
      */
     public void start() {
         Set<Class<?>> scanNodes = scanPackage(this.packageName, true);
-        Set<ScanNodeData> scanNodeDatas = new HashSet<>();
+        List<ScanNodeData> scanNodeDatas = new ArrayList<>();
         //获取扫描节点数据
         scanNodes.forEach(aClass -> {
             ScanNodeData scanNodeData = resolveScanNodeData(aClass);
@@ -31,6 +32,8 @@ public class ProcessTree {
                 scanNodeDatas.add(scanNodeData);
             }
         });
+        //通过优先度进行排序
+        sort(scanNodeDatas);
 
         scanNodeDatas.forEach(scanNodeData -> scanNodeStart(scanNodeData));
 
