@@ -25,7 +25,7 @@ public class ScanHelper {
         try {
             set = ClassHelper.getInstance().FindClass(packageName, recursive);
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("根据包名扫描失败:");
+            System.err.println("Scan based on package name failed :");
             e.printStackTrace();
         }
         return set;

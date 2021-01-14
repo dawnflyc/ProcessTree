@@ -97,7 +97,7 @@ public class Result<T> {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            System.err.println("<" + clazz.getName() + "> 根据 无参构造 构建实例失败!");
+            System.err.println("<" + clazz.getName() + "> Failed to construct an instance according to [no parameter construction]!");
         }
         return null;
     }
@@ -116,7 +116,7 @@ public class Result<T> {
             constructor = clazz.getConstructor(parameterTypes);
             return constructor.newInstance(parameter);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            System.err.println("<" + clazz.getName() + "> 根据 有参构造 构建实例失败!");
+            System.err.println("<" + clazz.getName() + "> Failed to construct an instance according to [parameter construction]!");
         }
         return null;
     }

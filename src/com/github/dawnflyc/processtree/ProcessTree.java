@@ -65,7 +65,7 @@ public class ProcessTree {
             try {
                 ((IScanResultHandler) (scanNodeData.getScanClass().newInstance())).handle(result);
             } catch (InstantiationException | IllegalAccessException e) {
-                System.err.println("<" + scanNodeData.getScanClass().getName() + "> 扫描类必须为无参构造，否则无法扫描！");
+                System.err.println("<" + scanNodeData.getScanClass().getName() + "> The scanning class must be non-parameter constructor, otherwise it cannot be scanned!");
             }
         }
     }
