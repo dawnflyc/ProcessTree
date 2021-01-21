@@ -21,7 +21,7 @@
 其他参数都有默认值，只有扫描目标需要手动设置，具体用法看下文，这里只需要大概了解一下即可。
 
 ```java
-        @ScanNode(packageName=auto，target= IBlockRegistered.class) //扫描注解，扫描该类所在包的所有实现IBlockRegistered的类
+        @ScanNode(packageName=auto,target= IBlockRegistered.class) //扫描注解，扫描该类所在包的所有实现IBlockRegistered的类
         public class BlockRegistry implements IScanResultHandler<IBlockRegistered>{ //实现IScanResultHandler接口，便可处理扫描结果
             
          	@Override
@@ -52,6 +52,10 @@
 
 由于是扫描一堆类，然后一起构建，所以构造参数也需要一致。
 
+ 
+
+**！！！此框架在打包时应打入包内，所以说并不算前置！！！**
+
 ### 三、用法
 
 **首先启动服务，它才会开始扫描，因为程序都有个入口。**
@@ -71,11 +75,15 @@ tree.start();
 
 ### 五、如何在Gradle中导入
 
+打开build.gradle
+
+``
+
 ```
 compile fileTree(dir:'libs',includes:['*jar'])
 ```
 
-这段代码放入dependencies里，导入libs中所有库。
+这段代码放入dependencies中，导入libs中所有库。
 
 ```
 from {
@@ -83,7 +91,7 @@ from {
 }
 ```
 
-这段放入jar里，打包时会将框架打入包内。
+这段放入jar里，打包时会将框架打入包内。）
 
 ### 四、所有用到的类
 

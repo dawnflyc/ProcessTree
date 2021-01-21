@@ -93,7 +93,7 @@ public class Result<T> {
      * @param clazz
      * @return
      */
-    protected T buildNonParamInstance(Class<T> clazz) {
+    public T buildNonParamInstance(Class<T> clazz) {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
@@ -110,7 +110,7 @@ public class Result<T> {
      * @param parameter
      * @return
      */
-    protected T buildParamInstance(Class<T> clazz, Class<?>[] parameterTypes, Object[] parameter) {
+    public T buildParamInstance(Class<T> clazz, Class<?>[] parameterTypes, Object[] parameter) {
         Constructor<T> constructor = null;
         try {
             constructor = clazz.getConstructor(parameterTypes);
