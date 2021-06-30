@@ -2,12 +2,15 @@ package com.github.dawnflyc.processtree.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * 一系列类反射方法
@@ -50,7 +53,7 @@ public class ClassHelper {
     }
 
     /**
-     * 查找类,如果包名是“”那么查找范围为jar包里全部
+     * 查找类,如果包名是""那么查找范围为jar包里全部
      *
      * @param packageName 包名
      * @param recursive   是否迭代循环
@@ -71,13 +74,15 @@ public class ClassHelper {
             if ("file".equals(url.getProtocol())) {
                 String filePath = URLDecoder.decode(url.getFile(), "UTF-8");
                 findClassByFile(packageName, filePath, recursive, set);
+            }else if ("jar".equals(url.getProtocol())){
+                findClassByJar(url,packageName,set);
             }
         }
         return set;
     }
 
     /**
-     * 递归查找类
+     * 递归查找类文件
      *
      * @param packageName 包名
      * @param packagePath 包路径
@@ -96,24 +101,66 @@ public class ClassHelper {
                     String className = classFile.getName().substring(0, classFile.getName().length() - 6);
                     Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className);
                     set.add(clazz);
-                    //缓存
-                    String[] pack = packageName.split("\\.");
-                    for (int i = 0; i < pack.length; i++) {
-                        String p = pack[i];
-                        String temp = "";
-                        for (int j = 0; j < i; j++) {
-                            temp += pack[j] + ".";
-                        }
-                        p = temp + p;
-                        Set<Class<?>> set1 = CACHE.get(p);
-                        if (set1 == null) {
-                            set1 = new HashSet<>();
-                            CACHE.put(p, set1);
-                        }
-                        set1.add(clazz);
-                    }
+                    saveCache(packageName,clazz);
                 }
             }
         }
     }
+
+    /**
+     * 查找jar 类
+     * @param url
+     * @param packageName
+     * @param set
+     */
+    private void findClassByJar(URL url ,String packageName, Set<Class<?>> set){
+        try {
+            JarURLConnection connection = (JarURLConnection) url.openConnection();
+            JarFile jarFile = connection.getJarFile();
+            Enumeration<JarEntry> jarEntries = jarFile.entries();
+            while (jarEntries.hasMoreElements()) {
+                JarEntry jar = jarEntries.nextElement();
+                if(jar.isDirectory() || !jar.getName().endsWith(".class")) {
+                    continue;
+                }
+                String jarName = jar.getName();
+                jarName = jarName.replace(".class", "");
+                jarName = jarName.replace("/", ".");
+                try {
+                    Class<?> clazz = Class.forName(jarName);
+                    set.add(clazz);
+                    saveCache(packageName,clazz);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 保存为缓存
+     * @param packageName
+     * @param clazz
+     */
+    private void saveCache(String packageName,Class<?> clazz){
+        //缓存
+        String[] pack = packageName.split("\\.");
+        for (int i = 0; i < pack.length; i++) {
+            String p = pack[i];
+            String temp = "";
+            for (int j = 0; j < i; j++) {
+                temp += pack[j] + ".";
+            }
+            p = temp + p;
+            Set<Class<?>> set1 = CACHE.get(p);
+            if (set1 == null) {
+                set1 = new HashSet<>();
+                CACHE.put(p, set1);
+            }
+            set1.add(clazz);
+        }
+    }
 }
+
