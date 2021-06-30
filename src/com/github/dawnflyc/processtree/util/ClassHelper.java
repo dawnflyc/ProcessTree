@@ -62,7 +62,7 @@ public class ClassHelper {
      * @throws ClassNotFoundException
      */
     public Set<Class<?>> FindClass(String packageName, final boolean recursive) throws IOException, ClassNotFoundException {
-        if (CACHE.containsKey(packageName)) {
+        if (CACHE.containsKey(packageName+":"+recursive)) {
             return CACHE.get(packageName);
         }
         String packagePath = packageName.replace('.', '/');
@@ -75,7 +75,7 @@ public class ClassHelper {
                 String filePath = URLDecoder.decode(url.getFile(), "UTF-8");
                 findClassByFile(packageName, filePath, recursive, set);
             }else if ("jar".equals(url.getProtocol())){
-                findClassByJar(url,packageName,set);
+                findClassByJar(url,packageName,set,recursive);
             }
         }
         return set;
@@ -101,7 +101,7 @@ public class ClassHelper {
                     String className = classFile.getName().substring(0, classFile.getName().length() - 6);
                     Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className);
                     set.add(clazz);
-                    saveCache(packageName,clazz);
+                    saveCache(packageName,clazz,recursive);
                 }
             }
         }
@@ -113,7 +113,7 @@ public class ClassHelper {
      * @param packageName
      * @param set
      */
-    private void findClassByJar(URL url ,String packageName, Set<Class<?>> set){
+    private void findClassByJar(URL url ,String packageName, Set<Class<?>> set,final boolean recursive){
         try {
             JarURLConnection connection = (JarURLConnection) url.openConnection();
             JarFile jarFile = connection.getJarFile();
@@ -129,7 +129,7 @@ public class ClassHelper {
                 try {
                     Class<?> clazz = Class.forName(jarName);
                     set.add(clazz);
-                    saveCache(packageName,clazz);
+                    saveCache(packageName,clazz,recursive);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -144,7 +144,7 @@ public class ClassHelper {
      * @param packageName
      * @param clazz
      */
-    private void saveCache(String packageName,Class<?> clazz){
+    private void saveCache(String packageName,Class<?> clazz,boolean recursive){
         //缓存
         String[] pack = packageName.split("\\.");
         for (int i = 0; i < pack.length; i++) {
@@ -157,7 +157,7 @@ public class ClassHelper {
             Set<Class<?>> set1 = CACHE.get(p);
             if (set1 == null) {
                 set1 = new HashSet<>();
-                CACHE.put(p, set1);
+                CACHE.put(p+":"+recursive, set1);
             }
             set1.add(clazz);
         }
